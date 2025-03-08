@@ -10,12 +10,12 @@ from flask_cors import CORS
 from datetime import timedelta
 from flasgger import Swagger
 import uuid
-import redis
+import os
 
 app = Flask(__name__)
 api = Api(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:gublu%40sql9@localhost:5432/task_manager'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE.URL','postgresql://postgres:gublu%40sql9@localhost/task_manager')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'Hello'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=10)
@@ -24,7 +24,6 @@ app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
 swagger = Swagger(app)
-redis_client = redis.Redis(host = "localhost",port = 6379, decode_responses=True)
 
 limiter = Limiter(get_remote_address,app=app,default_limits = ['5 per minute'])
 CORS(app, resources= {r"/api/*":{"origins" : ["http://localhost:5000", "http://127.0.0.1:5000"]}})
@@ -333,160 +332,3 @@ if __name__=='__main__':
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# '''from flask import Flask, render_template, session, request, redirect, jsonify, url_for
-# from flask_sqlalchemy import SQLAlchemy
-# from flask_bcrypt import Bcrypt
-# from sqlalchemy import String, Integer, ForeignKey
-# from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-
-
-
-# app = Flask(__name__)
-# jwt = JWTManager(app)
-# app.config['JWT_SECRET_KEY'] = "Hello"
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///to.db"
-# db = SQLAlchemy(app)
-# bcrypt = Bcrypt(app)
-
-# class User(db.Model):
-#     id = db.Column(Integer, primary_key = True)
-#     email = db.Column(String,nullable = False, unique = True)
-#     password = db.Column(String,nullable =False)
-#     todo = db.relationship("TODO", backref = "user", lazy = True)
-    
-# class TODO(db.Model):
-#     id = db.Column(Integer, primary_key = True)
-#     title = db.Column(String, nullable = False)
-#     desc = db.Column(String, nullable = False)
-#     user_id = db.Column(Integer,ForeignKey("user.id"),nullable = False)
-
-
-# @app.route("/register", methods = ["POST"])
-# def register():
-#     data = request.get_json()
-#     email = data.get("email")
-#     password = data.get("password")
-    
-#     if not email or not password:
-#         return {"Message" : "Invalid Username or Password"},400
-    
-#     if User.query.filter_by(email=email).first():
-#         return {"Message" : "User already exists"},409
-    
-    
-#     hashed = bcrypt.generate_password_hash(password).decode("utf-8")
-#     verify_user = User(email = email, password = hashed)
-    
-#     db.session.add(verify_user)
-#     db.session.commit()
-#     return {"Message" : "User registered successfully"},201
-
-# @app.route("/login", methods = ["GET", "POST"])
-# def login():
-#     data  =request.get_json()
-#     email = data["email"]
-#     password = data["password"]
-    
-#     if not email or not password:
-#         return {"Message" : "Invalid Username or Password"},400
-    
-#     verify_user: User = User.query.filter_by(email=email).first()
-#     if not verify_user or not bcrypt.check_password_hash(verify_user.password,password):
-#         return {"Message" : "Invalid Credentials"},401
-    
-    
-#     access_token = create_access_token(identity=email)
-#     return {"Access Token" : access_token},200
-    
-# @app.route("/create" , methods = ["GET", "POST"])
-# @jwt_required()
-# def create():
-#     current_user = get_jwt_identity()
-#     info = request.get_json()
-#     title = info["title"]
-#     desc = info["desc"]
-    
-#     user: User= User.query.filter_by(email=current_user).first()
-#     if not user:
-#         return {"Message" : "User not found"}
-    
-#     if not title:
-#         return {"Message" : "No title, Please enter title"},400
-    
-#     new_todo = TODO(title = title, desc =desc, user_id = user.id) 
-#     db.session.add(new_todo)
-#     db.session.commit()
-    
-#     return {"Message" : f"Todo Created Successfully , id : {new_todo.id}"}
-
-# @app.route("/edit/<int:todo_id>", methods=["POST"])
-# @jwt_required()
-# def edit(todo_id):
-#     current_user = get_jwt_identity()
-#     info = request.get_json()
-#     title = info["title"]
-#     desc = info["desc"]
-    
-#     user : User = User.query.filter_by(email=current_user).first()
-#     if not user:
-#         return{"Message" : "User doesn't exist"},404
-    
-#     todo : TODO= TODO.query.filter_by(id = todo_id, user_id = user.id).first()
-    
-#     if not todo:
-#         return {"Message" : "Todo not found"},404
-    
-#     todo.title = title
-#     todo.desc = desc
-#     db.session.commit()
-#     return {"Message" : "Todo updated successfully"}
-    
-    
-# @app.route("/delete/<int:todo_id>", methods = ["POST", "GET"])
-# @jwt_required()
-# def delete(todo_id):
-#     current_user = get_jwt_identity()
-#     user :User  = User.query.filter_by(email=current_user).first()
-    
-#     if not user:
-#         return {"Message" : "User doesn't exist"}, 404
-    
-#     todo = TODO.query.filter_by(id = todo_id, user_id = user.id).first()
-#     if not todo:
-#         return {"Message" : "Todo deleted succesfully"}
-    
-#     db.session.delete(todo)
-#     db.session.commit()
-#     return {"Message" : "Deleted successfully"}
-    
-
-
-
-
-    
-    
-    
-    
-    
-
-
-
-
-    
-# if __name__ == "__main__":
-#     app.run(debug=True)
-     
-#      '''
