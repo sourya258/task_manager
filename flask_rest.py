@@ -15,7 +15,7 @@ import os
 app = Flask(__name__)
 api = Api(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE.URL','postgresql://postgres:gublu%40sql9@localhost/task_manager')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL','postgresql://postgres:gublu%40sql9@localhost/task_manager')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'Hello'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=10)
