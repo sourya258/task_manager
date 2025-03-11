@@ -19,7 +19,7 @@ A RESTful API built with Flask for task management.
 
   ### Clone the Repository  
     git clone https://github.com/sourya258/task_manager.git  
-    cd task-manager-api  
+    cd task_manager
   
   ### Install Dependencies  
     pip install -r requirements.txt  
@@ -30,12 +30,12 @@ A RESTful API built with Flask for task management.
     JWT_SECRET_KEY=your_jwt_secret  
   
   ### Initialize the Database  
-    from app import app, db  
+    from flask_rest import app, db  
     with app.app_context():  
         db.create_all()  
     
   ### Run the API Locally  
-    python app.py
+    python flask_rest.py
   
 ## API Endpoints  
 Refer to this link for API endpoints:  
