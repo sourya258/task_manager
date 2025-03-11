@@ -24,17 +24,15 @@ A RESTful API built with Flask for task management.
   ### Install Dependencies  
     pip install -r requirements.txt  
   
-  ### Set Up Environment Variables  
-    Create a `.env` file and add:  
-        DATABASE_URL=postgresql://user:password@localhost/taskmanager  
-        SECRET_KEY=your_secret_key  
-        JWT_SECRET_KEY=your_jwt_secret  
+  ### Set Up Environment Variables   
+    DATABASE_URL=postgresql://user:password@localhost/taskmanager  
+    SECRET_KEY=your_secret_key  
+    JWT_SECRET_KEY=your_jwt_secret  
   
   ### Initialize the Database  
-    Run the following in a Python shell:  
-        from app import app, db  
-        with app.app_context():  
-            db.create_all()  
+    from app import app, db  
+    with app.app_context():  
+        db.create_all()  
     
   ### Run the API Locally  
     python app.py
